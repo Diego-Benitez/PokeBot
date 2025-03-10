@@ -2,7 +2,11 @@ import discord
 from discord.ext import commands
 import requests
 import random
-import keys
+import os
+import webserver
+
+
+DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -26,6 +30,7 @@ def format_stats(stats):
         "velocidad": stats[5]['base_stat']
     }
     return stats_dict
+
 
 @bot.command()
 async def poke(ctx, *, arg=None):
@@ -67,6 +72,7 @@ async def poke(ctx, *, arg=None):
         print("Error: ", e)
         await ctx.send("Hubo un error al procesar tu solicitud.")
     
+
 @poke.error
 async def error_type(ctx, error):
     if isinstance(error, commands.errors.MissingRequiredArgument):
@@ -81,4 +87,6 @@ async def limpiar(ctx):
     await ctx.channel.purge()
     await ctx.send("Mensajes eliminados", delete_after = 3)    
 
-bot.run(keys.TOKEN) 
+
+webserver.keep_alive()
+bot.run(DISCORD_TOKEN) 
